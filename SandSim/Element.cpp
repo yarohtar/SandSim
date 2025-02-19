@@ -1,12 +1,7 @@
 #include "Element.h"
-#include "Map.h"
-#include <iostream>
-#include <cmath>
 
-Element::Element(float x, float y, Square* currentSquare, Random* rand)
+Element::Element()
 {
-	this->x = x;
-	this->y = y;
 	energy = 0;
 	mass = 1;
 	isFreeFalling = false;
@@ -16,27 +11,30 @@ Element::Element(float x, float y, Square* currentSquare, Random* rand)
 	corrosionResistance = 0;
 	heat = 20;
 	heatEmitTreshold = 35;
-	this->currentSquare = currentSquare;
-	r = rand;
 	pressure = 0;
+	is_empty = false;
+	is_out = false;
+	is_liquid = false;
+	is_gas = false;
+	is_solid = false;
+	is_moveable = false;
 }
 
 Element::~Element()
 {
-	delete r;
 }
 
 bool Element::isEmpty()
 {
-	return false;
+	return is_empty;
 }
 bool Element::isOut()
 {
-	return false;
+	return is_out;
 }
 bool Element::isLiquid()
 {
-	return false;
+	return is_liquid;
 }
 bool Element::isFakeLiquid()
 {
@@ -44,15 +42,15 @@ bool Element::isFakeLiquid()
 }
 bool Element::isGas()
 {
-	return false;
+	return is_gas;
 }
 bool Element::isSolid()
 {
-	return false;
+	return is_solid;
 }
 bool Element::isMoveable()
 {
-	return false;
+	return is_moveable;
 }
 
 bool Element::canMoveThrough(Element& e)
@@ -60,27 +58,9 @@ bool Element::canMoveThrough(Element& e)
 	return e.isEmpty();
 }
 
-void Element::applyImpulse(Map& map)
-{
-	if (isFreeFalling)
-	{
-		for (int i = -1; i <= 1; i++)
-			for (int j = -1; j <= 1; j++)
-				map(x + i, y + j).receiveImpulse();
-	}
-}
-void Element::receiveImpulse()
-{
-	return;
-}
-
-void Element::applyHeat(float delta, Map& map)
+void Element::applyHeat(float delta)
 {
 	//get surrounding and send heat if heat over threshold
-}
-double Element::force()
-{
-	return 0.0;
 }
 void Element::receiveHeat(int receivedHeat, float delta)
 {
@@ -97,131 +77,8 @@ sf::Color Element::makeColor()
 	return sf::Color::Black;
 }
 
-void Element::preUpdate(float delta, Map& map)
-{
-	return;
-}
 
-void Element::update(float delta, Map& map)
-{
-	preUpdate(delta, map);
-	postUpdate(delta, map);
-	return;
-}
-
-void Element::postUpdate(float delta, Map& map)
-{
-	return;
-}
-
-void Element::setPosition(float x, float y)
-{
-	this->x = x;
-	this->y = y;
-}
-
-void Element::setCurrentSquare(Square* square)
-{
-	currentSquare = square;
-}
-
-float Element::rng()
-{
-	return r->rng();
-}
-
-float Element::beta_rng(unsigned int a, unsigned int b)
-{
-	return r->beta(a,b);
-}
-
-bool Element::swapWith(float x2, float y2, Map& m)
-{
-	if (m(x,y).canMoveThrough(m(x2,y2))) {
-		m.swap(x, y, x2, y2);
-		return true;
-	}
-	return false;
-}
-
-void Element::moveTo(float x2, float y2, Map& m)
-{
-	if (std::abs(x2 - x) > std::abs(y2 - y))
-	{
-		if (x < x2)
-		{
-			float coef = (y2 - y) / (x2 - x);
-			for (float i = x + 1; i <= x2; i++)
-			{
-				if (!swapWith(i, coef * (i - x) + y, m))
-					break;
-			}
-		}
-		else if (x2 < x)
-		{
-			float coef = (y2 - y) / (x2 - x);
-			for (float i = x - 1; i >= x2; i--)
-			{
-				if (!swapWith(i, coef * (i-x)+y, m))
-					break;
-			}
-		}
-	}
-	else {
-		if (y < y2) {
-			float coef = (x2 - x) / (y2 - y);
-			for (float i = y + 1; i <= y2; i++)
-			{
-				if (!swapWith(coef * (i - y) + x, i, m))
-					break;
-			}
-		}
-		else if (y2<y) {
-			float coef = (x2 - x) / (y2 - y);
-			for (float i = y - 1; i >= y2; i--)
-			{
-				if (!swapWith(coef * (i - y) + x, i, m))
-					break;
-			}
-		}
-	}
-}
-
-void Element::moveInDir(float dirx, float diry, int n, Map& m)
-{
-	if (n > 8)
-		n = 8;
-	if (std::abs(dirx) >= std::abs(diry))
-	{
-		int step=-1;
-		if (dirx>0)
-			step = 1;
-		for (int i = 0; i < n; i++)
-		{
-			applyImpulse(m);
-			float x2 = x + step;
-			float y2 = y + step * diry / dirx;
-			if (!swapWith(x2, y2, m))
-				return;
-		}
-	}
-	else
-	{
-		int step = -1;
-		if (diry>0)
-			step = 1;
-		for (int i = 0; i < n; i++)
-		{
-			applyImpulse(m);
-			float y2 = y + step;
-			float x2 = x + step * dirx / diry;
-			if (!swapWith(x2, y2, m))
-				return;
-		}
-	}
-}
-
-void Element::push(float x, float y, float p, Map& m)
+void Element::push(float x, float y, float p)
 {
 	return;
 }
@@ -231,9 +88,10 @@ void Element::receive_push(float p, unsigned long long pushFrame)
 	return;
 }
 
-void Element::receive_liquid_density(int i, float f, Map& map)
+void Element::receive_liquid_density(int i, float f)
 {
 	return;
 }
 
-float Element::gravity = 100.f;
+float Element::gravity = 150.f;
+

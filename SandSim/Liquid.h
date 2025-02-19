@@ -3,17 +3,15 @@
 class Liquid : public Element
 {
 protected:
-	int dontUpdate;
-	bool hasBeenPushed;
-	unsigned long long pushFrame;
-
-	double liq_density[9];
-	double f_equib[9];
+	double df[9];
+	double feq[9];
+	double fcoll[9];
 	double speedx;
 	double speedy;
 	double rho0;
 	double deformation_coef;
 	double rho;
+	double eps;
 	double d0;
 	double c2;
 	double invc2;
@@ -24,22 +22,15 @@ protected:
 	unsigned long long received_liq_density_frame[9];
 	bool is_interface;
 protected:
-	virtual bool isLiquid();
-	virtual bool isMoveable();
-	virtual Liquid* specialize();
 	virtual double force();
 public:
-	Liquid(float x, float y, Square* currentSquare);
-	virtual void update(float delta, Map& map);
-	//virtual void preUpdate(float delta, Map& map);
-	virtual void receive_liquid_density(int i, float p, Map& map);
+	Liquid();
 	void make_empty();
 private:
-	void interface_update(float delta, Map& map);
 	Liquid* make_interface();
-	void surround_interface(Map& m);
-	void get_equib(float delta, Map& m);
-	void get_eq(double rho, double ux, double uy, double feq[]);
-	void get_speed();
-	void get_rho();
+	void get_equib();
+	void collision(float delta);
+	void get_eps();
+	void stream();
+	void deriveQuantities();
 };

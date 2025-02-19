@@ -1,9 +1,9 @@
 #include <SFML/Graphics.hpp>
-#include "Map.h"
-#include "Elements.h"
 #include <iostream>
+#include <thread>
+#include "Elements.h"
 
-void draw_circle(float brush_size, sf::Vector2f posgl, char mode, Map &m)
+void draw_circle(float brush_size, sf::Vector2f posgl, char mode)
 {
 	for (float i = posgl.x - brush_size; i <= posgl.x + brush_size; i++)
 	{
@@ -11,13 +11,13 @@ void draw_circle(float brush_size, sf::Vector2f posgl, char mode, Map &m)
 		{
 			if ((i - posgl.x) * (i - posgl.x) + (j - posgl.y) * (j - posgl.y) <= brush_size * brush_size)
 			{
-				if (m(i, j).isEmpty()) {
+				if (map::grid(i, j).isEmpty()) {
 					if (mode == 'g')
-						m.replaceParticle(i, j, *new Ground(i, j, nullptr));
+						map::replaceParticle(i, j, *new Ground());
 					else if (mode == 's')
-						m.replaceParticle(i, j, *new Sand(i, j, nullptr));
+						map::replaceParticle(i, j, *new Sand());
 					else
-						m.replaceParticle(i, j, *new Water(i, j, nullptr));
+						map::replaceParticle(i, j, *new Water());
 
 				}
 			}
@@ -32,34 +32,28 @@ int main()
 
 	sf::Vector2f viewSpeed(0, 0);
 
-	sf::View view(sf::Vector2f(240, 135), sf::Vector2f(480,270));
-	window.setView(view);
+	sf::View gameView(sf::Vector2f(240, 135), sf::Vector2f(480,270));
+	sf::View UIView({960,540}, {1920, 1080});
 
 	sf::Clock clock;
 
-	Map m;
+	map::initialize();
 
 	char mode = 's';
 
-	window.setFramerateLimit(60);
+	//window.setFramerateLimit(60);
 	
 	float brush_size = 1;
 
 	int counter = 0;
 
-	//sf::VertexArray arr;
-	//arr.resize(30000);
-	//arr.setPrimitiveType(sf::Points);
 
 	while (window.isOpen())
 	{
-
+		window.setView(gameView);
+		map::diagnostics.start_mmt("frame time");
 		float delta = clock.restart().asSeconds();
 		counter++;
-		if (counter > 10) {
-			std::cout << 1 / delta << std::endl;
-			counter = 0;
-		}
 
 		sf::Event evnt; 
 		while (window.pollEvent(evnt))
@@ -87,9 +81,11 @@ int main()
 				case sf::Keyboard::LBracket:
 					if (brush_size > 1)
 						brush_size--;
+					break;
 				case sf::Keyboard::RBracket:
 					if (brush_size < 25)
 						brush_size++;
+					break;
 				}
 			}
 		}
@@ -111,28 +107,27 @@ int main()
 			sf::Vector2i pos = sf::Mouse::getPosition(window);
 			sf::Vector2f posgl = window.mapPixelToCoords(pos);
 
-			draw_circle(brush_size, posgl, mode, m);
+			draw_circle(brush_size, posgl, mode);
 
 		}
-		view.move(viewSpeed.x * delta, viewSpeed.y * delta);
-		window.setView(view);
-		m.update(delta);
+		gameView.move(viewSpeed.x * delta, viewSpeed.y * delta);
+		map::update(delta);
 
+		window.setView(gameView);
 		window.clear();
 
-		/*Random r;
-		for (int i = 0; i < 30000; i++) {
-			arr[i].position.y = 10;
-			arr[i].position.x = 100*r.beta(5,5);
-			arr[i].color = sf::Color(255, 255, 255, 4);
+
+		map::draw(&window);
+		map::diagnostics.end_mmt("frame time");
+
+		map::diagnostics.add_mmt("frame rate", 1 / delta);
+		if (counter > 10)
+		{
+			map::diagnostics.refresh({"frame rate", "frame time", "update", "swaps"});
+			counter = 0;
 		}
-		arr[0].position.y = 10;
-		arr[0].position.x = 100;
-		arr[0].color = sf::Color::White;*/
-
-		m.draw(&window);
-		//window.draw(arr);
+		window.setView(UIView);
+		window.draw(map::diagnostics);
 		window.display();
-
 	}
 }

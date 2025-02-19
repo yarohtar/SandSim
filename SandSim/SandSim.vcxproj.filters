@@ -60,11 +60,11 @@
     <ClCompile Include="Random.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Trail.cpp">
+    <ClCompile Include="GameWorker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FakeLiquid.cpp">
-      <Filter>Source Files\Elements</Filter>
+    <ClCompile Include="MoveableSolidWorker.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -107,10 +107,10 @@
     <ClInclude Include="Random.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Trail.h">
+    <ClInclude Include="GameWorker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FakeLiquid.h">
+    <ClInclude Include="MoveableSolidWorker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

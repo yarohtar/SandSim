@@ -1,4 +1,5 @@
 #include "Random.h"
+#include <random>
 
 unsigned int Random::seed_priv = 0;
 
@@ -38,6 +39,12 @@ float Random::beta(unsigned int a, unsigned int b)
 	float x = gamma(a);
 	float y = gamma(b);
 	return x / (x + y);
+}
+
+template<class It>
+void Random::random_shuffle(It start, It end)
+{
+	std::shuffle(start, end, std::default_random_engine(seed));
 }
 
 Random* Random::makeRandom()

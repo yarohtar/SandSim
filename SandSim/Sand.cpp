@@ -1,14 +1,15 @@
 #include "Sand.h"
-#include "Map.h"
-#include <iostream>
+#include <random>
 
 
-Sand::Sand(float x, float y, Square* currentSquare):MoveableSolid(x,y, currentSquare)
+Sand::Sand():MoveableSolid()
 {
-	color = sf::Color::Yellow;
+	int r = rand()%20;
+	int g = rand() % 20;
+	int b = rand() % 15;
+	color = sf::Color(214+r, 158+g, 40+b);
 	element_id = sand_id;
-	chanceToReceiveImpulse = 1;
-	friction = 10;
+	friction = 3;
 	alpha = 20;
 	beta = 1;
 }

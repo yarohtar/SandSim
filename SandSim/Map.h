@@ -1,68 +1,49 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include <iostream>
-#include <stack>
-#include <thread>
-#include <barrier>
-#include "Random.h"
+#include <map>
 
-#define nsqx 32
-#define nsqy 32
-
-class Square;
 class Element;
-class Out;
+class Square;
 
-class Map
+namespace map
 {
-private:
-	std::vector<std::vector<Square*>> squares;
-	std::stack<int> freeIndices;
-	//Square** squares = new Square*[nsqx];
-	bool loaded[nsqx][nsqy];
-	sf::Vector2i loaded_start;
-	sf::Vector2i loaded_end;
-	float width;
-	float height;
-	sf::Vector2f view_position;
-	sf::Vector2f view_size;
-	Element* defaultOutParticle;
-	int num_threads;
-	std::vector<std::thread*> threads;
-	std::barrier<>* sync4;
-	std::barrier<>* sync_update;
-	float delta;
-public:
-	sf::VertexBuffer mapBuffer;
-	unsigned long long frameCounter;
+	extern sf::VertexBuffer mapBuffer;
+	extern unsigned long long frameCounter;
 
+	void initialize();
+	void loadEmpty();
 
-private:
-	bool getSquareCoords(float x, float y, sf::Vector2i &v);
-	void LoadSquare(int i, int j, sf::Vector2i& ul);
-	void UnloadSquare(int i, int j);
-	void update4(float delta, int istart, int jstart);
-	void thread_update_all(int thread_id, Random r);
-	void thread_update_batch(int nx, int ny, int sx, int sy, int start, int end, int x2, int y2);
-	void alert_surrounding(int i, int j);
-public:
-	Map();
-	void LoadEmpty();
-
-	Element &operator()(float x, float y);
+	::Element & grid(float a, float b);
+	void alert(float x, float y);
 
 	void setViewPosition(float x, float y);
 	void setViewSize(float x, float y);
 	void setViewPosition(sf::Vector2f xy);
 	void setViewSize(sf::Vector2f xy);
 
-	void replaceParticle(float x, float y, Element& p);
+	void replaceParticle(float x, float y, ::Element& p);
+	void requestSwap(float x1, float y1, float x2, float y2, Square* origin);
 	void swap(float x1, float y1, float x2, float y2);
-	void updateParticle(float x, float y);
 	void swapWithTrail(float x1, float y1, float x2, float y2, sf::Color& c);
-	void destroyParticle(float x, float y);
-	Element& getParticle(float x, float y);
 
 	void update(float delta);
 	void draw(sf::RenderWindow* window);
+
+	class Diagnostics : public sf::Drawable, public sf::Transformable
+	{
+	private:
+		sf::Font font;
+		sf::Text display_text;
+		bool loaded = false;
+		std::map<std::string, std::vector<float>> measurements;
+		std::map<std::string, sf::Clock> clocks;
+		void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+	public:
+		void start_mmt(std::string s);
+		void end_mmt(std::string s);
+		void refresh(std::vector<std::string>);
+		void add_mmt(std::string, float);
+	};
+
+	extern Diagnostics diagnostics;
 };

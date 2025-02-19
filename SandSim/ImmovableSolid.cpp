@@ -1,21 +1,7 @@
 #include "ImmovableSolid.h"
 
-ImmovableSolid::ImmovableSolid(float x, float y, Square* currentSquare) :Element(x, y, currentSquare)
+ImmovableSolid::ImmovableSolid() :Element()
 {
+	is_solid = true;
 
-}
-
-void ImmovableSolid::update(float delta, Map& map)
-{
-	return;
-}
-
-bool ImmovableSolid::isSolid()
-{
-	return true;
-}
-
-void ImmovableSolid::applyImpulse(Map& map)
-{
-	return;
 }
