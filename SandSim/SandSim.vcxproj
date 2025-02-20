@@ -153,9 +153,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Cell.cpp" />
     <ClCompile Include="Empty.cpp" />
     <ClCompile Include="GameWorker.cpp" />
-    <ClCompile Include="Ground.cpp" />
     <ClCompile Include="ImmovableSolid.cpp" />
     <ClCompile Include="Liquid.cpp" />
     <ClCompile Include="main.cpp">
@@ -168,15 +168,16 @@
     <ClCompile Include="Out.cpp" />
     <ClCompile Include="Element.cpp" />
     <ClCompile Include="Random.cpp" />
-    <ClCompile Include="Sand.cpp" />
     <ClCompile Include="Square.cpp" />
-    <ClCompile Include="Water.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Cell.h" />
+    <ClInclude Include="Diagnostics.h" />
     <ClInclude Include="Empty.h" />
     <ClInclude Include="GameWorker.h" />
     <ClInclude Include="Ground.h" />
     <ClInclude Include="ImmovableSolid.h" />
+    <ClInclude Include="LBMCollisionWorker.h" />
     <ClInclude Include="Liquid.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="MoveableSolid.h" />

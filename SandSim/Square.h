@@ -7,14 +7,14 @@
 #include<thread>
 #include <mutex>
 
-class Element;
+class Cell;
 
 const int sqdim = 16;
 
 class Square : public sf::Drawable, public sf::Transformable
 {
 private:
-	std::vector<std::vector<Element*>> mapLocal;
+	std::vector<std::vector<Cell*>> mapLocal;
 	sf::VertexArray particles;
 	void updateVertex(int i, int j);
 	std::vector<int> primes;
@@ -50,11 +50,11 @@ public:
 	Square(float x, float y);
 	void initEmpty();
 	bool inBounds(float x, float y);
-	Element& getParticle(float x, float y);
-	void setParticle(Element& p, float x, float y);
+	Cell& getParticle(float x, float y);
+	void setParticle(Cell& p, float x, float y);
 	void updatedParticle(int i, int j);
-	void replaceParticle(Element& p, int i, int j);
-	Element& operator()(float x, float y);
+	void replaceParticle(Cell& p, int i, int j);
+	Cell& operator()(float x, float y);
 	void updateVertices();
 	void handle_swaps();
 	void requestSwap(float x1, float y1, float x2, float y2, Square* sq);

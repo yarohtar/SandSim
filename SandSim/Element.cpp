@@ -1,23 +1,18 @@
 #include "Element.h"
+#include "Water.h"
+#include "Sand.h"
+#include "Ground.h"
+#include "Empty.h"
+#include "Out.h"
 
 Element::Element()
 {
-	energy = 0;
-	mass = 1;
-	isFreeFalling = false;
-	isActive = false;
-	health = 0;
-	heatResistance = 1;
-	corrosionResistance = 0;
-	heat = 20;
-	heatEmitTreshold = 35;
-	pressure = 0;
 	is_empty = false;
-	is_out = false;
-	is_liquid = false;
-	is_gas = false;
 	is_solid = false;
+	is_liquid = false;
 	is_moveable = false;
+	is_out = false;
+	is_gas = false;
 }
 
 Element::~Element()
@@ -95,3 +90,8 @@ void Element::receive_liquid_density(int i, float f)
 
 float Element::gravity = 150.f;
 
+const Element Element::Water = Water::Water();
+const Element Element::Sand = Sand::Sand();
+const Element Element::Ground = Ground::Ground();
+const Element Element::Empty = Empty::Empty();
+const Element Element::Out = Out::Out();

@@ -1,5 +1,6 @@
 #include "Square.h"
 #include "Elements.h"
+#include "Cell.h"
 
 Square::Square(float x, float y)
 {
@@ -12,7 +13,7 @@ Square::Square(float x, float y)
 	{
 		mapLocal[i].resize(sqdim);
 		for (int j = 0; j < sqdim; j++) {
-			mapLocal[i][j] = new Empty();
+			mapLocal[i][j] = new Cell();
 		}
 	}
 	for (int i = 0; i < sqdim; i++)
@@ -91,7 +92,7 @@ bool Square::inBounds(float x, float y)
 	return true;
 }
 
-Element& Square::getParticle(float x, float y)
+Cell& Square::getParticle(float x, float y)
 {
 	x = round(x);
 	y = round(y);
@@ -111,7 +112,7 @@ void Square::updatedParticle(int i, int j)
 	updatedThisFrame = true;
 }
 
-void Square::setParticle(Element& p, float x, float y)
+void Square::setParticle(Cell& p, float x, float y)
 {
 	int i = round(x - this->x);
 	int j = round(y - this->y);
@@ -122,13 +123,13 @@ void Square::setParticle(Element& p, float x, float y)
 	map::alert(x, y);
 }
 
-void Square::replaceParticle(Element& p, int i, int j)
+void Square::replaceParticle(Cell& p, int i, int j)
 {
 	delete mapLocal[i][j];
 	setParticle(p, x+i, y+j);
 }
 
-Element& Square::operator()(float x, float y)
+Cell& Square::operator()(float x, float y)
 {
 	return getParticle(x, y);
 }
@@ -187,8 +188,8 @@ void Square::handle_swaps()
 			if (ind > i)
 				ind = i;
 			auto [origin, dest, sq] = swap_requests[ind];
-			Element& p = getParticle(dest.x, dest.y);
-			Element& q = sq->getParticle(origin.x, origin.y);
+			Cell& p = getParticle(dest.x, dest.y);
+			Cell& q = sq->getParticle(origin.x, origin.y);
 			sq->setParticle(p, origin.x, origin.y);
 			setParticle(q, dest.x, dest.y);
 			prev = i + 1;

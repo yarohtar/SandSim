@@ -2,7 +2,7 @@
 #include "Element.h"
 class ImmovableSolid : public Element
 {
-public:
+protected:
 	ImmovableSolid();
 };
 

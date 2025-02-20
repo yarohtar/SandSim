@@ -1,5 +1,6 @@
 #pragma once
 #include "Map.h"
+#include "Diagnostics.h"
 #include "Element.h"
 #include "Empty.h"
 #include "Ground.h"

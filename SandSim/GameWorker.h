@@ -1,7 +1,7 @@
 #pragma once
 
 class Square;
-class Element;
+class Cell;
 class Random;
 
 class GameWorker
@@ -17,10 +17,10 @@ public:
 	
 protected:
 	bool inBounds(float, float);
-	Element& getParticle(float, float);
+	Cell& getParticle(float, float);
 	float rng();
 	float beta_rng(unsigned int a, unsigned int b);
 
 	int getIndex(float, float);
-	Element& getParticleByIndex(int);
+	Cell& getParticleByIndex(int);
 };

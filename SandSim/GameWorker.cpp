@@ -43,14 +43,14 @@ inline int GameWorker::getIndex(float x, float y)
 	return (int)round(x) + sqdim * round(y);
 }
 
-Element& GameWorker::getParticle(float x, float y)
+Cell& GameWorker::getParticle(float x, float y)
 {
 	if (!inBounds(x, y))
 		return map::grid(x, y);
 	return currentSquare->getParticle(x, y);
 }
 
-Element& GameWorker::getParticleByIndex(int ind)
+Cell& GameWorker::getParticleByIndex(int ind)
 {
 	float x = currentSquare->x + ind % sqdim;
 	float y = currentSquare->y + floor(ind / sqdim);

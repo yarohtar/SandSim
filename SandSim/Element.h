@@ -9,14 +9,6 @@ enum { water_id, sand_id, empty_id, fire_id, out_id, ground_id };
 class Element
 {
 protected:
-	bool is_empty;
-	bool is_solid;
-	bool is_liquid;
-	bool is_moveable;
-	bool is_out;
-	bool is_gas;
-	int element_id;
-	float mass;
 	float energy;
 	bool isFreeFalling;
 	bool isActive;
@@ -27,25 +19,41 @@ protected:
 	int corrosionResistance;
 	unsigned long long last_frame_updated;
 public:
-	float time_since_movedx;
-	float time_since_movedy;
-	float speedx;
-	float speedy;
+	 bool is_empty;
+	 bool is_solid;
+	 bool is_liquid;
+	 bool is_moveable;
+	 bool is_out;
+	 bool is_gas;
+	 int element_id;
+
+	 float speedx;
+	 float speedy;
+
+	//moveable solids
+	 float time_since_movedx;
+	 float time_since_movedy;
 	float friction;
-	float alpha;
-	float beta;
-	float pressure;
-	float pushPressure;
+	 float alpha;
+	 float beta;
+
+	//lbm stuff
+	 float df[9];
+	 float feq[9];
+	 float fcoll[9];
+	 float rho;
+	 float eps;
+	 float rho0;
+	 float mass;
 	sf::Color color;
 
 //funcitons
 protected:
+	Element();
+	virtual ~Element();
 	virtual sf::Color makeColor();
 	virtual void applyHeat(float delta);
 public:
-	Element();
-	virtual ~Element();
-
 	bool isEmpty();
 	bool isOut();
 	bool isLiquid();
@@ -65,4 +73,9 @@ public:
 	//static
 public:
 	static float gravity;
+	static const Element Water;
+	static const Element Sand;
+	static const Element Ground;
+	static const Element Empty;
+	static const Element Out;
 };

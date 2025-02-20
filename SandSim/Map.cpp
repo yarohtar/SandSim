@@ -5,9 +5,11 @@
 #include <barrier>
 #include <random>
 #include "Elements.h"
+#include "Cell.h"
 #include "Random.h"
 #include "Square.h"
 #include "MoveableSolidWorker.h"
+#include "Diagnostics.h"
 
 namespace
 {
@@ -23,7 +25,7 @@ namespace
 	float height;
 	sf::Vector2f view_position;
 	sf::Vector2f view_size;
-	Element* default_out_particle;
+	Cell* default_out_cell;
 	int num_threads;
 	std::vector<std::thread*> threads;
 	std::barrier<>* sync4;
@@ -184,7 +186,7 @@ void map::initialize()
 	frameCounter = 0;
 	width = sqdim * nsqx;
 	height = sqdim * nsqy;
-	default_out_particle = new Out();
+	default_out_cell = new Cell(Element::Out);
 	view_position = sf::Vector2f(0, 0);
 	view_size = sf::Vector2f(480, 270);
 	squares.resize(nsqx);
@@ -231,7 +233,7 @@ void map::loadEmpty()
 	}
 }
 
-void map::replaceParticle(float x, float y, Element& p)
+void map::replaceParticle(float x, float y, Cell& p)
 {
 	sf::Vector2i v;
 	if (!getSquareCoords(x, y, v)) return;
@@ -240,18 +242,18 @@ void map::replaceParticle(float x, float y, Element& p)
 	squares[v.x][v.y]->replaceParticle(p, x - v.x * sqdim, y - v.y * sqdim);
 }
 
-Element& map::grid(float x, float y)
+Cell& map::grid(float x, float y)
 {
 	x = round(x);
 	y = round(y);
 	sf::Vector2i v;
 	if (!getSquareCoords(x, y, v))
 	{
-		return *default_out_particle;
+		return *default_out_cell;
 	}
 	if (!loaded[v.x][v.y])
 	{
-		return *default_out_particle;
+		return *default_out_cell;
 	}
 	return (*squares[v.x][v.y])(x, y);
 }
@@ -280,8 +282,8 @@ void map::swap(float x1, float y1, float x2, float y2)
 	if (!getSquareCoords(x2, y2, v2)) return;
 	if (!loaded[v1.x][v1.y] || !loaded[v2.x][v2.y])
 		return;
-	Element& p = (*squares[v1.x][v1.y])(x1, y1);
-	Element& q = (*squares[v2.x][v2.y])(x2, y2);
+	Cell& p = (*squares[v1.x][v1.y])(x1, y1);
+	Cell& q = (*squares[v2.x][v2.y])(x2, y2);
 	squares[v2.x][v2.y]->setParticle(p, x2, y2);
 	squares[v1.x][v1.y]->setParticle(q, x1, y1);
 }

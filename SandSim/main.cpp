@@ -2,6 +2,7 @@
 #include <iostream>
 #include <thread>
 #include "Elements.h"
+#include "Cell.h"
 
 void draw_circle(float brush_size, sf::Vector2f posgl, char mode)
 {
@@ -13,11 +14,11 @@ void draw_circle(float brush_size, sf::Vector2f posgl, char mode)
 			{
 				if (map::grid(i, j).isEmpty()) {
 					if (mode == 'g')
-						map::replaceParticle(i, j, *new Ground());
+						map::replaceParticle(i, j, *new Cell(Element::Ground));
 					else if (mode == 's')
-						map::replaceParticle(i, j, *new Sand());
+						map::replaceParticle(i, j, *new Cell(Element::Sand));
 					else
-						map::replaceParticle(i, j, *new Water());
+						map::replaceParticle(i, j, *new Cell(Element::Water));
 
 				}
 			}
